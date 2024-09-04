@@ -5,13 +5,13 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-# [workspace]
-# members = [".", "entity", "migration"]
+[workspace]
+members = [".", "entity", "migration"]
 
 
 [dependencies]
-# entity = { path = "entity" }
-# migration = { path = "migration" } # depends on your needs
+entity = { path = "entity" }
+migration = { path = "migration" } # depends on your needs
 actix-web = "4.5.1"
 serde = "1.0.197"
 serde_json = "1.0.1"
