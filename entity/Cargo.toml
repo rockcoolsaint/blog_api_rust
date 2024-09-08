@@ -12,4 +12,4 @@ path = "src/mod.rs"
 serde = { verison = "1.0.197", features = [ "derive" ] }
 
 [dependencies.sea-orm]
-version = "0.12"
+version = "1.0"
