@@ -1,8 +1,9 @@
 use actix_web::{post, web, Responder};
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, EntityTrait, QueryFilter, Set};
 use serde::{Deserialize, Serialize};
+use sha256::digest;
 
-use crate::utils::{app_state, api_response};
+use crate::utils::{api_response, app_state, jwt::encode_jwt};
 
 #[derive(Serialize, Deserialize)]
 struct RegisterModel {
@@ -25,7 +26,7 @@ pub async fn register(
   let user_model = entity::user::ActiveModel {
     name: Set(register_json.name.clone()),
     email: Set(register_json.email.clone()),
-    password: Set(register_json.password.clone()),
+    password: Set(digest(&register_json.password)),
     ..Default::default()
   }.insert(&app_state.db).await.unwrap();
 
@@ -41,12 +42,16 @@ pub async fn login(
     .filter(
       Condition::all()
       .add(entity::user::Column::Email.eq(&login_json.email))
-      .add(entity::user::Column::Password.eq(&login_json.password))
+      .add(entity::user::Column::Password.eq(digest(&login_json.password)))
     ).one(&app_state.db).await.unwrap();
 
   if user.is_none() {
     return api_response::ApiResponse::new(401, "User Not Found".to_string())
   }
 
-  api_response::ApiResponse::new(200, format!("{}", user.unwrap().name))
+  let user_data = user.unwrap();
+
+  let token = encode_jwt(user_data.email, user_data.id).unwrap();
+
+  api_response::ApiResponse::new(200, format!("{{ 'token':'{}' }}", token))
 }

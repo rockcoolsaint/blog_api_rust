@@ -30,7 +30,7 @@ async fn main() -> std::io::Result<()> {
         .configure(routes::home_routes::config)
         .configure(routes::auth_routes::config)
     })
-    .bind((address, port))?
+    .bind(("localhost", port))?
     .run()
     .await
 }
