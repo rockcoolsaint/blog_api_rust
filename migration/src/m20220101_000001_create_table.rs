@@ -20,11 +20,12 @@ impl MigrationTrait for Migration {
                     .col(string(Post::Uuid).uuid().unique_key().not_null())
                     .col(string(Post::Image).string())
                     .col(string(Post::UserId).integer().not_null())
+                    .col(string(Post::CreatedAt).date_time().not_null())
 
                     .foreign_key(
                         ForeignKey::create()
                         .name("fk-posts-users-id")
-                        .from(Post::Table, Post::Uuid)
+                        .from(Post::Table, Post::UserId)
                         .to(User::Table, User::Id)
                     )
                     .to_owned(),
@@ -48,5 +49,6 @@ enum Post {
     Text,
     Uuid,
     Image,
-    UserId
+    UserId,
+    CreatedAt
 }
